@@ -19,6 +19,7 @@
     }
   },
   "dependencies": {
+    "extract-zip": "^2.0.1",
     "pdf-lib": "^1.17.1",
     "sharp": "^0.33.4"
   },

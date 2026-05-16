@@ -1,8 +1,10 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { PDFDocument } = require('pdf-lib');
 const sharp = require('sharp');
+const extractZip = require('extract-zip');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -57,19 +59,33 @@ ipcMain.handle('pick-save', async (_, defaultName) => {
 ipcMain.handle('scan-folder', async (_, folderPath) => {
   const SUPPORTED = /\.(webp|jpg|jpeg|png|gif|bmp)$/i;
   let targetFolder = folderPath;
+  let tempZipDir = null;
 
-  // If a file was dropped, resolve to its parent directory.
+  // If a ZIP file was dropped, extract it
   try {
     const stat = fs.statSync(folderPath);
-    if (stat.isFile()) targetFolder = path.dirname(folderPath);
-  } catch {
-    return { error: 'Cannot read that folder.' };
+    if (stat.isFile() && /\.zip$/i.test(folderPath)) {
+      tempZipDir = path.join(os.tmpdir(), 'transmute-' + Date.now());
+      fs.mkdirSync(tempZipDir, { recursive: true });
+      await extractZip(folderPath, { dir: tempZipDir });
+      targetFolder = tempZipDir;
+    } else if (stat.isFile()) {
+      targetFolder = path.dirname(folderPath);
+    }
+  } catch (e) {
+    if (tempZipDir && fs.existsSync(tempZipDir)) {
+      fs.rmSync(tempZipDir, { recursive: true, force: true });
+    }
+    return { error: 'Cannot read that file or folder: ' + e.message };
   }
 
   let files;
   try {
     files = fs.readdirSync(targetFolder);
   } catch {
+    if (tempZipDir && fs.existsSync(tempZipDir)) {
+      fs.rmSync(tempZipDir, { recursive: true, force: true });
+    }
     return { error: 'Cannot read that folder.' };
   }
   const images = files
@@ -77,11 +93,11 @@ ipcMain.handle('scan-folder', async (_, folderPath) => {
     .sort(naturalSort)
     .map((f) => ({ name: f, fullPath: path.join(targetFolder, f) }));
 
-  return { images, folderPath: targetFolder };
+  return { images, folderPath: targetFolder, tempZipDir };
 });
 
 // ─── IPC: build PDF ───────────────────────────────────────────────────────────
-ipcMain.handle('build-pdf', async (event, { files, outputPath, title }) => {
+ipcMain.handle('build-pdf', async (event, { files, outputPath, title, tempZipDir }) => {
   const send = (msg) => event.sender.send('progress', msg);
 
   try {
@@ -113,6 +129,11 @@ ipcMain.handle('build-pdf', async (event, { files, outputPath, title }) => {
   } catch (err) {
     send({ error: err.message });
     return { success: false, error: err.message };
+  } finally {
+    // Clean up temporary ZIP extraction directory
+    if (tempZipDir && fs.existsSync(tempZipDir)) {
+      fs.rmSync(tempZipDir, { recursive: true, force: true });
+    }
   }
 });
 

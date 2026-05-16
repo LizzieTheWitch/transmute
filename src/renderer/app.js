@@ -2,6 +2,7 @@
 let currentFolder = null;
 let imageFiles = [];   // array of { name, fullPath }
 let savePath = null;
+let tempZipDir = null; // temporary directory if ZIP was extracted
 
 const $ = (id) => document.getElementById(id);
 
@@ -133,6 +134,7 @@ btnConvert.addEventListener('click', async () => {
     files: imageFiles.map((f) => f.fullPath),
     outputPath: savePath,
     title: inputTitle.value.trim() || undefined,
+    tempZipDir: tempZipDir,
   });
 });
 
@@ -158,6 +160,7 @@ async function loadFolder(folderPath) {
   const actualFolderPath = result.folderPath || folderPath;
   currentFolder = actualFolderPath;
   imageFiles = result.images;
+  tempZipDir = result.tempZipDir || null;
 
   folderLabel.textContent = actualFolderPath;
   folderPill.classList.remove('hidden');
@@ -185,6 +188,7 @@ function clearFolder() {
   currentFolder = null;
   imageFiles = [];
   savePath = null;
+  tempZipDir = null;
 
   folderPill.classList.add('hidden');
   dropZone.classList.remove('hidden');
