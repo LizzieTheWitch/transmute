@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   pickFolder: () => ipcRenderer.invoke('pick-folder'),
+  pickZip: () => ipcRenderer.invoke('pick-zip'),
   pickSave: (defaultName) => ipcRenderer.invoke('pick-save', defaultName),
   scanFolder: (folderPath) => ipcRenderer.invoke('scan-folder', folderPath),
   buildPdf: (opts) => ipcRenderer.invoke('build-pdf', opts),

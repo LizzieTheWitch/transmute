@@ -40,7 +40,22 @@ app.on('window-all-closed', () => {
 
 // ─── IPC: pick folder ─────────────────────────────────────────────────────────
 ipcMain.handle('pick-folder', async () => {
-  const result = await dialog.showOpenDialog({ properties: ['openDirectory'] });
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  });
+  if (result.canceled) return null;
+  return result.filePaths[0];
+});
+
+// ─── IPC: pick ZIP file ───────────────────────────────────────────────────────
+ipcMain.handle('pick-zip', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: [
+      { name: 'ZIP Files', extensions: ['zip'] },
+      { name: 'All Files', extensions: ['*'] },
+    ],
+  });
   if (result.canceled) return null;
   return result.filePaths[0];
 });

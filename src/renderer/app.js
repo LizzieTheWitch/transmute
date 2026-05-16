@@ -8,7 +8,8 @@ const $ = (id) => document.getElementById(id);
 
 // ─── Elements ────────────────────────────────────────────────────────────────
 const dropZone       = $('drop-zone');
-const btnBrowse      = $('btn-browse');
+const btnBrowseFolder = $('btn-browse-folder');
+const btnBrowseZip   = $('btn-browse-zip');
 const folderPill     = $('folder-pill');
 const folderLabel    = $('folder-path-label');
 const btnClearFolder = $('btn-clear-folder');
@@ -73,10 +74,15 @@ window.addEventListener('drop', async (e) => {
   }
 });
 
-// ─── Browse button ────────────────────────────────────────────────────────────
-btnBrowse.addEventListener('click', async () => {
+// ─── Browse buttons ──────────────────────────────────────────────────────────
+btnBrowseFolder.addEventListener('click', async () => {
   const folder = await window.api.pickFolder();
   if (folder) await loadFolder(folder);
+});
+
+btnBrowseZip.addEventListener('click', async () => {
+  const zipFile = await window.api.pickZip();
+  if (zipFile) await loadFolder(zipFile);
 });
 
 // ─── Clear folder ─────────────────────────────────────────────────────────────

@@ -202,6 +202,22 @@ html, body {
 .btn-primary:hover { filter: brightness(1.15); }
 .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { filter: brightness(1.2); }
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.button-group .btn {
+  flex: 1;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .button-group {
+    flex-direction: column;
+  }
+}
 .btn-cta {
   margin-top: 20px;
   width: 100%;
