@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>transmute</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Title bar drag region -->
+  <div class="titlebar">
+    <span class="titlebar-icon">📄</span>
+    <span class="titlebar-text">transmute</span>
+  </div>
+
+  <main class="container">
+
+    <!-- STEP 1 -->
+    <section class="card" id="step-folder">
+      <div class="step-badge">1</div>
+      <h2>Choose your image folder</h2>
+      <p class="hint">Pick the folder that contains your WEBP (or JPG/PNG) images.</p>
+
+      <div class="drop-zone" id="drop-zone">
+        <div class="drop-icon">🖼️</div>
+        <p>Drag &amp; drop a folder here</p>
+        <span class="or-divider">— or —</span>
+        <button class="btn btn-primary" id="btn-browse">Browse…</button>
+      </div>
+
+      <div class="folder-pill hidden" id="folder-pill">
+        <span class="folder-pill-icon">📁</span>
+        <span id="folder-path-label"></span>
+        <button class="icon-btn" id="btn-clear-folder" title="Clear">✕</button>
+      </div>
+
+      <div class="image-list hidden" id="image-list">
+        <div class="image-list-header">
+          <span id="image-count"></span>
+          <button class="text-btn" id="btn-reorder">Re-sort</button>
+        </div>
+        <ul id="file-list-ul"></ul>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="card hidden" id="step-options">
+      <div class="step-badge">2</div>
+      <h2>Output options</h2>
+
+      <label class="field-label" for="input-title">PDF Title <span class="optional">(optional)</span></label>
+      <input type="text" id="input-title" class="text-input" placeholder="e.g. My Doujin" />
+
+      <label class="field-label" style="margin-top:16px">Save location</label>
+      <div class="save-row">
+        <input type="text" id="input-save-path" class="text-input flex-grow" readonly placeholder="Click 'Choose…' to set a save location" />
+        <button class="btn btn-secondary" id="btn-pick-save">Choose…</button>
+      </div>
+    </section>
+
+    <!-- STEP 3 – Convert -->
+    <section class="card hidden" id="step-convert">
+      <div class="step-badge">3</div>
+      <h2>Create PDF</h2>
+
+      <div class="progress-area hidden" id="progress-area">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <p class="progress-label" id="progress-label">Starting…</p>
+        <ul class="warning-list" id="warning-list"></ul>
+      </div>
+
+      <div class="done-banner hidden" id="done-banner">
+        <span class="done-icon">✅</span>
+        <div>
+          <strong>Done!</strong>
+          <p id="done-path"></p>
+        </div>
+        <button class="btn btn-primary" id="btn-open-folder">Open folder</button>
+      </div>
+
+      <button class="btn btn-cta" id="btn-convert" disabled>
+        <span class="btn-icon">⚡</span> Convert to PDF
+      </button>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
